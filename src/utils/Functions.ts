@@ -1,9 +1,9 @@
 export const debounce = (callback: Function, ms: number) => {
   let debounceCheck: number;
 
-  return function(...args: any) {
+  return function<T>(...args: Array<T>) {
     if (debounceCheck) clearTimeout(debounceCheck);
-    debounceCheck = <any>setTimeout(() => {
+    debounceCheck = window.setTimeout(() => {
       callback(...args);
     }, ms);
   };
