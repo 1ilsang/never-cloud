@@ -12,10 +12,9 @@ const SnbAreaContainer: FunctionComponent<{}> = () => {
 
   // TODO: folderble 추가해줘야함.
   // TODO: music 에는 sub path url 이 존재함.
-
   const onClickHandler = (target: HTMLLinkElement) => {
     // REVIEW: 중첩 라우팅
-    const href = target.href.substring(target.href.indexOf(`#`));
+    const href = target.href.substring(target.href.indexOf(`#`) + 1);
     const value = getLastViewKey(href);
 
     // REVIEW: Immutable

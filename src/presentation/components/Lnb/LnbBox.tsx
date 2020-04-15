@@ -13,6 +13,7 @@ type TLnbBoxProps = {
   handler: Function;
 };
 
+// REVIEW: Component shouldn't have logic.
 const LnbBox: FunctionComponent<TLnbBoxProps> = (props) => {
   const { title, list, handler } = props;
 
