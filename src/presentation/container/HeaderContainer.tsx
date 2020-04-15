@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 type THeaderContainer = { history: RouteComponentProps['history'] };
 
-const HeaderContainer: FunctionComponent<THeaderContainer> = props => {
+const HeaderContainer: FunctionComponent<THeaderContainer> = (props) => {
   const { history } = props;
   const logoutHandler = () => {
     console.info(`logout!`);
@@ -12,7 +12,7 @@ const HeaderContainer: FunctionComponent<THeaderContainer> = props => {
     history.push('/');
   };
   const gotoMainHandler = () => {
-    history.push(`/`);
+    window.location.href = '/';
   };
 
   return (

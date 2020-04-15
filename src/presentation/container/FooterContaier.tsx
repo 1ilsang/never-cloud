@@ -27,7 +27,7 @@ const FooterContainer: FunctionComponent<{}> = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          NAVER Corp.
+          NEVER Corp.
         </a>{' '}
         All Rights Reserved.
       </address>

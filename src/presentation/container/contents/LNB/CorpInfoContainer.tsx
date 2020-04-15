@@ -4,18 +4,18 @@ import styled from 'styled-components';
 const CorpInfo: FunctionComponent<{}> = () => {
   return (
     <CorpInfoArea>
-      <p>사업자등록번호 : 220-81-62517</p>
+      <p>사업자등록번호 : XXX-XX-XXXXX</p>
       <p>
         통신판매업 신고번호 :<br />
-        경기 성남 제 2006-692호
+        경기 성남 제 XXXX-XXX호
       </p>
-      <p>상호 : 네이버(주)</p>
-      <p>대표이사 : 한성숙</p>
-      <p>대표전화 : 1588-3820</p>
-      <p>이메일 : ccnaver@naver.com</p>
+      <p>상호 : 네버(주)</p>
+      <p>대표이사 : 이상출</p>
+      <p>대표전화 : XXXX-XXXX</p>
+      <p>이메일 : 1ilsang@naver.com</p>
       <p>
         주소 :<br />
-        경기도 성남시 분당구 불정로6 그린팩토리
+        우리구 우리동 우리집 - 우리
       </p>
       <p>-</p>
       <p>

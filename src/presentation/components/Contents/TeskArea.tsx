@@ -2,6 +2,18 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 import { TonLNBHandler } from '../../../store/_types/Container';
 
+// REVIEW: Component shouldn't have logic.
+export const ButtonFoldSnb: FunctionComponent<TonLNBHandler> = ({
+  handler,
+}) => {
+  const onClickHandle = () => handler();
+  return (
+    <ButtonFoldSnbWrap onClick={onClickHandle}>
+      <span className="fold_ic"></span>
+    </ButtonFoldSnbWrap>
+  );
+};
+
 // XXX: 스타일만 있는 껍데기들도 재활용이 되니까 컴포넌트에 넣긴 했는데 흠. 이렇게 해도 될까
 export const TeskAreaWrap = styled.div<{ isFull: boolean }>`
   left: ${(props) => (props.isFull ? `-250px` : `0px`)};
@@ -33,17 +45,6 @@ export const TeskButtonGroup = styled.div`
 export const TeskLeft = styled.div`
   float: left;
 `;
-
-export const ButtonFoldSnb: FunctionComponent<TonLNBHandler> = ({
-  handler,
-}) => {
-  const onClickHandle = () => handler();
-  return (
-    <ButtonFoldSnbWrap onClick={onClickHandle}>
-      <span className="fold_ic"></span>
-    </ButtonFoldSnbWrap>
-  );
-};
 
 const ButtonFoldSnbWrap = styled.a`
   display: inline-block;
