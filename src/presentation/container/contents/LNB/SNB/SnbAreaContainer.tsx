@@ -1,61 +1,61 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { LnbBox } from '../../../../components/Lnb';
 
 const SnbAreaContainer: FunctionComponent<{}> = () => {
-  // TODO: Li 클릭시 localstorage - LAST_VIEW_KEY 에 path 추가하기
-  // TODO: 컴포넌트화
+  // eslint-disable-next-line
+  const [curClicked, setCurClicked] = useState<HTMLLinkElement>();
+
   // TODO: folderble 추가해줘야함.
+  // TODO: music 에는 sub path url 이 존재함.
+  // TODO:
+  const photoList = [
+    { contents: `특별한 순간`, link: `#/special` },
+    { contents: `사진·동영상`, link: `#/photo/all` },
+    { contents: `앨범`, link: `#/photo/album` },
+    { contents: `사진 폴더`, link: `#/photo/folder` },
+  ];
+  const driveList = [
+    { contents: `동영상`, link: `#/video` },
+    { contents: `문서`, link: `#/document` },
+    { contents: `음악`, link: `#/music` },
+    { contents: `즐겨 찾는 파일`, link: `#/protect` },
+    { contents: `모든 파일`, link: `` },
+  ];
+  const shareList = [
+    { contents: `함께보기`, link: `#/special` },
+    { contents: `공유 파일`, link: `#/special` },
+  ];
+
+  const onClickHandler = (target: HTMLLinkElement) => {
+    // REVIEW: 중첩 라우팅
+    const href = target.href.substring(target.href.indexOf(`#`));
+    let value = '';
+    if ([`#/special`, `#/photo/all`].includes(href)) value = href;
+    else if (href.includes(`#/photo`)) value = `#/photo/all`;
+    else value = `#/my`;
+
+    // REVIEW: Immutable
+    setCurClicked((prev) => {
+      if (prev) {
+        prev.style.color = `#222`;
+        prev.style.fontWeight = `400`;
+      }
+      target.style.color = `#418cff`;
+      target.style.fontWeight = `bold`;
+      return target;
+    });
+
+    window.localStorage.setItem(`LAST_VIEW_KEY`, value);
+  };
+
   return (
     <LnbArea>
-      <LnbBox>
-        <LnbTitle>포토</LnbTitle>
-        <LnbList>
-          <LnbListLi>
-            <LnbItem to="#/special">특별한 순간</LnbItem>
-          </LnbListLi>
-          <LnbListLi selected>
-            <LnbItem to="#/special">사진·동영상</LnbItem>
-          </LnbListLi>
-          <LnbListLi>
-            <LnbItem to="#/special">앨범</LnbItem>
-          </LnbListLi>
-          <LnbListLi>
-            <LnbItem to="#/special">사진 폴더</LnbItem>
-          </LnbListLi>
-        </LnbList>
-      </LnbBox>
-      <LnbBoxTop>
-        <LnbTitle>드라이브</LnbTitle>
-        <LnbList>
-          <LnbListLi>
-            <LnbItem to="#/special">동영상</LnbItem>
-          </LnbListLi>
-          <LnbListLi>
-            <LnbItem to="#/special">문서</LnbItem>
-          </LnbListLi>
-          <LnbListLi>
-            <LnbItem to="#/special">음악</LnbItem>
-          </LnbListLi>
-          <LnbListLi>
-            <LnbItem to="#/special">즐겨 찾는 파일</LnbItem>
-          </LnbListLi>
-          <LnbListLi>
-            <LnbItem to="#/special">모든 파일</LnbItem>
-          </LnbListLi>
-        </LnbList>
-      </LnbBoxTop>
-      <LnbBoxTop>
-        <LnbTitle>공유</LnbTitle>
-        <LnbList>
-          <LnbListLi>
-            <LnbItem to="#/special">함께보기</LnbItem>
-          </LnbListLi>
-          <LnbListLi>
-            <LnbItem to="#/special">공유 파일</LnbItem>
-          </LnbListLi>
-        </LnbList>
-      </LnbBoxTop>
+      <LnbBox title={`포토`} list={photoList} handler={onClickHandler} />
+      <PaddingBox />
+      <LnbBox title={`드라이브`} list={driveList} handler={onClickHandler} />
+      <PaddingBox />
+      <LnbBox title={`공유`} list={shareList} handler={onClickHandler} />
     </LnbArea>
   );
 };
@@ -65,48 +65,7 @@ const LnbArea = styled.div`
   border-top: 1px solid #eee;
 `;
 
-const LnbBox = styled.div``;
-
-const LnbTitle = styled.h2`
-  margin: 0 auto;
-  padding: 0 25px;
-  font-size: 12px;
-  font-weight: normal;
-  line-height: 15px;
-  color: #888;
-`;
-
-const LnbList = styled.ul`
-  padding: 0;
-  padding-top: 7px;
-  list-style: none;
-  margin: 0 auto;
-`;
-
-const LnbListLi = styled.li<any>`
-  display: block;
-  margin: 0 auto;
-  margin-top: 2px;
-  color: #222;
-
-  ${props => props.selected && 'color: #418cff; font-weight: bold;'}
-`;
-
-const LnbItem = styled(Link)`
-  position: relative;
-  display: block;
-  padding: 4px 25px 5px;
-  font-size: 16px;
-  line-height: 24px;
-  text-decoration: none;
-  color: inherit;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-`;
-
-const LnbBoxTop = styled(LnbBox)`
+const PaddingBox = styled.div`
   padding-top: 27px;
 `;
 

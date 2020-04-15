@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RouteComponentProps } from 'react-router-dom';
 import {
@@ -8,6 +8,17 @@ import {
 } from '../container';
 
 const WrapView: FunctionComponent<RouteComponentProps> = ({ history }) => {
+  const [isFirst, setIsFirst] = useState(true);
+
+  // REVIEW: URL init, immutable
+  useEffect(() => {
+    if (isFirst) {
+      const redirectUrl = window.localStorage.getItem(`LAST_VIEW_KEY`) || `/`;
+      setIsFirst(false);
+      history.push(redirectUrl);
+    }
+  }, [isFirst, history]);
+
   return (
     <WrapViewDiv>
       <HeaderContainer history={history} />

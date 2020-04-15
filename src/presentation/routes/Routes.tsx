@@ -8,13 +8,15 @@ import {
 import PrivateRoute from './PrivateRoute';
 import { LoginView, WrapView } from '../../presentation/view/index';
 
-const Routes: React.SFC<{}> = () => (
-  <Router>
-    <Switch>
-      <Route exact={true} path="/login" component={LoginView} />
-      <PrivateRoute path="/" component={WrapView} />
-      <Redirect path="*" to="/" />
-    </Switch>
-  </Router>
-);
+const Routes: React.SFC<{}> = () => {
+  return (
+    <Router>
+      <Switch>
+        <Route exact={true} path="/login" component={LoginView} />
+        <PrivateRoute path="/" component={WrapView} />
+        <Redirect path="*" to="/" />
+      </Switch>
+    </Router>
+  );
+};
 export default Routes;
