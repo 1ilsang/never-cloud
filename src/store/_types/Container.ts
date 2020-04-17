@@ -8,3 +8,7 @@ export type TonLNBHandler = {
 export type TRightContainer = {
   onLNBHandler: TonLNBHandler;
 } & RouteComponentProps;
+
+export type Thandler = {
+  handler: Function;
+};

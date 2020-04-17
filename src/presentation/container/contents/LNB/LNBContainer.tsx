@@ -5,9 +5,11 @@ import MyInfoContainer from './MyInfoContainer';
 import FloatingContainer from './FloatingContainer';
 import { SnbAreaContainer } from './SNB';
 
-const LNBContainer: FunctionComponent<{}> = () => {
+const LNBContainer: FunctionComponent<{ isDisplay: boolean }> = ({
+  isDisplay,
+}) => {
   return (
-    <LNBWrap>
+    <LNBWrap isDisplay={isDisplay}>
       <ScrollWrap>
         <MyInfoContainer />
         <SnbAreaContainer />
@@ -18,7 +20,8 @@ const LNBContainer: FunctionComponent<{}> = () => {
   );
 };
 
-const LNBWrap = styled.div`
+const LNBWrap = styled.div<{ isDisplay: boolean }>`
+  display: ${({ isDisplay }) => (isDisplay ? `block` : `none`)};
   position: absolute;
   z-index: 20;
   top: 55px;

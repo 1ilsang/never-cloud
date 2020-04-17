@@ -17,9 +17,10 @@ const ContentsContainer: FunctionComponent<{}> = () => {
 
   return (
     <>
-      {isViewLNB ? <LNBContainer /> : null}
+      {/* REVIEW: Display-none: Repaint :: NOT REFLOW */}
+      <LNBContainer isDisplay={isViewLNB} />
       {/* REVIEW: Sub-Router with Render Props. */}
-      <RightWrap>
+      <RightWrap isFull={!isViewLNB}>
         <Route
           path="/special"
           render={(props) => (
@@ -34,7 +35,7 @@ const ContentsContainer: FunctionComponent<{}> = () => {
   );
 };
 
-const RightWrap = styled.div`
+const RightWrap = styled.div<{ isFull: boolean }>`
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -45,7 +46,7 @@ const RightWrap = styled.div`
   flex-direction: column;
   position: absolute;
   top: 0;
-  left: 250px;
+  left: ${({ isFull }) => (isFull ? '0px' : '250px')};
   right: 0;
   bottom: 0;
   padding: 55px 0 30px 0;
