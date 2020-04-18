@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import { LNBContainer } from './LNB';
 import { SpecialContainer } from './special';
 import styled from 'styled-components';
+import { TaskContainer } from './task';
 
 const ContentsContainer: FunctionComponent<{}> = () => {
   const [isViewLNB, setIsViewLNB] = useState(true);
@@ -14,6 +15,7 @@ const ContentsContainer: FunctionComponent<{}> = () => {
   // TODO: ContextAPI
 
   const onLNBHandler = () => setIsViewLNB(!isViewLNB);
+  const onSearchHandler = () => console.log(`searchClick`);
 
   return (
     <>
@@ -21,14 +23,13 @@ const ContentsContainer: FunctionComponent<{}> = () => {
       <LNBContainer isDisplay={isViewLNB} />
       {/* REVIEW: Sub-Router with Render Props. */}
       <RightWrap isFull={!isViewLNB}>
+        <TaskContainer
+          onLNBHandler={onLNBHandler}
+          onSearchHandler={onSearchHandler}
+        />
         <Route
           path="/special"
-          render={(props) => (
-            <SpecialContainer
-              {...props}
-              onLNBHandler={{ handler: onLNBHandler, isViewLNB }}
-            />
-          )}
+          render={(props) => <SpecialContainer {...props} />}
         />
       </RightWrap>
     </>
@@ -50,6 +51,18 @@ const RightWrap = styled.div<{ isFull: boolean }>`
   right: 0;
   bottom: 0;
   padding: 55px 0 30px 0;
+
+  // TODO: 여기서부터 해결해야함.
+  .check_all {
+    display: inline-block;
+    height: 26px;
+    width: 27px;
+    margin-right: 10px;
+    border: 1px solid #cbcbcb;
+    background-color: #f8f8f8;
+    vertical-align: top;
+    text-align: center;
+  }
 `;
 
 export default ContentsContainer;
