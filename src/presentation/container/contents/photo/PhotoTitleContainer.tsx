@@ -10,7 +10,10 @@ const PhotoTitleContainer: FunctionComponent<{}> = () => {
     <Wrap>
       <h2>
         <span>
-          <LinkBox href={`/photo/all?time=${Date.now()}`} title="촬영일별 보기">
+          <LinkBox
+            href={`#/photo/all?time=${Date.now()}`}
+            title="촬영일별 보기"
+          >
             촬영일별 보기
           </LinkBox>
         </span>{' '}
@@ -19,10 +22,14 @@ const PhotoTitleContainer: FunctionComponent<{}> = () => {
           <LinkBox onClick={modalToggleHandler} title="전체 년도">
             전체 년도 <YearWrap>년도 선택</YearWrap>
           </LinkBox>
+          {/* <LinkBox onClick={modalToggleHandler} title="전체 년도">
+            전체 월 <YearWrap>월 선택</YearWrap>
+          </LinkBox> */}
           <YearSelectModal open={isOpenModal}>
             <ul>
               <li>
-                <LinkBox href="">전체</LinkBox>
+                <LinkBox href={`#/photo/all?time=${Date.now()}`}>전체</LinkBox>
+                {/* TODO: 중첩 ?date=YYYMMDD 까지 나와야 한다!! */}
               </li>
             </ul>
           </YearSelectModal>
