@@ -4,6 +4,7 @@ import { LNBContainer } from './LNB';
 import { SpecialContainer } from './special';
 import styled from 'styled-components';
 import { TaskContainer } from './task';
+import { PhotoAllContainer } from './photo';
 
 const ContentsContainer: FunctionComponent<{}> = () => {
   const [isViewLNB, setIsViewLNB] = useState(true);
@@ -30,6 +31,10 @@ const ContentsContainer: FunctionComponent<{}> = () => {
         <Route
           path="/special"
           render={(props) => <SpecialContainer {...props} />}
+        />
+        <Route
+          path="/photo/all"
+          render={(props) => <PhotoAllContainer {...props} />}
         />
       </RightWrap>
     </>

@@ -99,6 +99,10 @@ export const TaskButtonGroup = styled.div`
 
 export const TaskLeft = styled.div`
   float: left;
+
+  input {
+    margin-top: 7px;
+  }
 `;
 
 const ButtonFoldSnbWrap = styled.a`
