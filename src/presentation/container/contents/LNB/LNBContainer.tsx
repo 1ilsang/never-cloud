@@ -4,6 +4,7 @@ import CorpInfoContainer from './CorpInfoContainer';
 import MyInfoContainer from './MyInfoContainer';
 import FloatingContainer from './FloatingContainer';
 import { SnbAreaContainer } from './SNB';
+import { ScrollWrap } from 'presentation/components/ScrollWrap';
 
 const LNBContainer: FunctionComponent<{ isDisplay: boolean }> = ({
   isDisplay,
@@ -32,20 +33,6 @@ const LNBWrap = styled.div<{ isDisplay: boolean }>`
   background-color: #fff;
   line-height: normal;
   box-sizing: border-box;
-`;
-
-const ScrollWrap = styled.div`
-  overflow-y: scroll;
-  height: 100%;
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #c9c9c9;
-    border-radius: 8px;
-  }
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 10px;
-  }
 `;
 
 export default LNBContainer;
