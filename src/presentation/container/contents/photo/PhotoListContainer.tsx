@@ -1,15 +1,40 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import justifiedLayout from 'justified-layout';
 import { ScrollWrap } from 'presentation/components/ScrollWrap';
+import { LazyImage } from 'presentation/components/LazyLoad';
 import photoData from 'assets/datas/photo.json';
+import { TPhoto } from 'store/_types/DataSet';
+import { TJustifiedLayout } from 'store/_types/Container';
 
 const PhotoListContainer: FunctionComponent<{}> = () => {
   // TODO: photoData 및 videoData 를 가공해서 list 에 넣어줘야 함.
   // TODO: cur index width slice + width 계산
-  // const [list, setList] = useState([]);
+  const [list, setList] = useState([]);
   // const [idx, setIdx] = useState(0);
-  // 이미지 LazyLoading, throttle, click modal 등 해줘야할게 겁나 많음!!
+  // throttle, click modal 등 해줘야할게 겁나 많음!!
   // `#/photo/all/viewer/${photoData[0].id} is Modal Route Path
+  // const [layout, setLayout] = useState([]);
+
+  useEffect(() => {
+    const originList: TPhoto[] = JSON.parse(JSON.stringify(photoData));
+
+    // REVIEW: line-breaking algorithm
+    const initLayout: TJustifiedLayout = justifiedLayout([
+      0.5,
+      1.5,
+      1,
+      1.8,
+      0.4,
+      0.7,
+      0.9,
+      1.1,
+      1.7,
+      2,
+      2.1,
+    ]);
+    console.log(initLayout);
+  });
 
   return (
     <Wrap>
@@ -31,7 +56,6 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
                   width: `160.6px`,
                   height: `120.45px`,
                   position: `absolute`,
-                  backgroundColor: `rgb(255, 255, 255)`,
                 }}
               >
                 <Item>
@@ -51,7 +75,6 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
                   width: `160.6px`,
                   height: `120.45px`,
                   position: `absolute`,
-                  backgroundColor: `rgb(255, 255, 255)`,
                 }}
               >
                 <Item>
@@ -71,16 +94,11 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
                   width: `398.159px`,
                   height: `120.45px`,
                   position: `absolute`,
-                  backgroundColor: `rgb(255, 255, 255)`,
                 }}
               >
                 <Item>
                   <a href={`#/photo/all/viewer/${photoData[2].id}`}>
-                    <img
-                      src={photoData[2].url}
-                      alt={photoData[2].alt}
-                      title={photoData[2].title}
-                    />
+                    <LazyImage src={`dasfaefaelihjhi`} alt={photoData[2].alt} />
                   </a>
                 </Item>
               </li>
@@ -187,6 +205,7 @@ const Item = styled.div`
     -ms-flex-pack: center;
     position: relative;
     height: 100%;
+    background-color: #f5f5f5;
   }
 
   a:before {
