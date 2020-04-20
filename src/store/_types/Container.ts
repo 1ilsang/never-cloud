@@ -22,3 +22,13 @@ export type TJustifiedLayout = {
   windowCount: number;
   boxes: Array<TJustifiedLayoutItem>;
 };
+
+export type TViewCondition = {
+  PHOTO_GROUP_TYPES: string;
+  PHOTO_SORTS: string;
+};
+
+export type TDefaultIdx = {
+  start: number;
+  end: number;
+};

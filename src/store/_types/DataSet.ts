@@ -3,6 +3,7 @@ export type TPhoto = {
   url: string;
   date: Date;
   alt: string;
+  width: string;
   title: string;
   isBookmark: boolean;
   type: string;

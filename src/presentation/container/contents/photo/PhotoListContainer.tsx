@@ -5,35 +5,78 @@ import { ScrollWrap } from 'presentation/components/ScrollWrap';
 import { LazyImage } from 'presentation/components/LazyLoad';
 import photoData from 'assets/datas/photo.json';
 import { TPhoto } from 'store/_types/DataSet';
-import { TJustifiedLayout } from 'store/_types/Container';
+import {
+  TJustifiedLayout,
+  TViewCondition,
+  TDefaultIdx,
+} from 'store/_types/Container';
+
+const defaultIdx = {
+  start: 0,
+  end: 10,
+};
+const defaultCondition = {
+  PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
+  PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
+};
 
 const PhotoListContainer: FunctionComponent<{}> = () => {
   // TODO: photoData 및 videoData 를 가공해서 list 에 넣어줘야 함.
   // TODO: cur index width slice + width 계산
   const [list, setList] = useState([]);
-  // const [idx, setIdx] = useState(0);
+  const [viewCondition, setViewCondition] = useState<TViewCondition>(
+    defaultCondition,
+  );
+  const [curIdx, setCurIdx] = useState<TDefaultIdx>(defaultIdx);
+
   // throttle, click modal 등 해줘야할게 겁나 많음!!
   // `#/photo/all/viewer/${photoData[0].id} is Modal Route Path
   // const [layout, setLayout] = useState([]);
 
   useEffect(() => {
-    const originList: TPhoto[] = JSON.parse(JSON.stringify(photoData));
-
+    // TODO: date path 및 localstorage sort 보고 보여줄 애들 만들어 줘야함.
+    // TODO: defaultCondition 조정해줘야 함.(with window.localStorage.setItem)
+    // JSON.stringify(photoData.filter(e => e.date <> urlQueryDate).slice(curIdx.start, curIdx.end)),
+    const originList: TPhoto[] = JSON.parse(
+      JSON.stringify(photoData.slice(curIdx.start, curIdx.end)),
+    );
+    const layoutList: number[] = originList.map((e) =>
+      Number((Number(e.width.slice(0, -2)) / 120.45).toFixed(2)),
+    );
     // REVIEW: line-breaking algorithm
-    const initLayout: TJustifiedLayout = justifiedLayout([
-      0.5,
-      1.5,
-      1,
-      1.8,
-      0.4,
-      0.7,
-      0.9,
-      1.1,
-      1.7,
-      2,
-      2.1,
-    ]);
-    console.log(initLayout);
+    // FIXME: 레이아웃 만드는거 신중하게 해줘야 할듯.
+    const initLayout: TJustifiedLayout = justifiedLayout(layoutList);
+    /**
+     * [{
+     *  viewCondition,
+     *  arr
+     * }]
+     */
+    // TODO: 이거 어떻게 채워줄지 고민해야함.
+    // const refineList = originList.reduce((acc, cur) => {
+    //   const year = cur.date;
+    //   const month = cur.date;
+    //   const day = cur.date;
+
+    //   if (acc.length === 0) {
+    //     const title = (
+    //       <h4 className="photo_title">
+    //         <CheckBox isChecked={false}>
+    //           <input id="this" type="checkbox" value={`${year}`} />
+    //           {year}년
+    //         </CheckBox>
+    //       </h4>
+    //     );
+    //     const ul = (
+    //       <PhotoList style={{ height: `1974.12px`, position: `relative` }}>
+    //         {refineLi}
+    //       </PhotoList>
+    //     );
+    //     acc.push({ title, ul });
+    //     return acc;
+    //   }
+    //   return acc;
+    // }, []);
   });
 
   return (
