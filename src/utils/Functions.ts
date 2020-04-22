@@ -11,6 +11,18 @@ export const debounce = (callback: Function, ms: number) => {
   };
 };
 
+export const throttle = (callback: Function, ms: number) => {
+  let throttleCheck: number;
+
+  return function <T>(...args: Array<T>) {
+    if (throttleCheck) return;
+    throttleCheck = window.setTimeout(() => {
+      callback(...args);
+      throttleCheck = 0;
+    }, ms);
+  };
+};
+
 export const getSortedFunction: Function = (key: string) => {
   switch (key) {
     case `filmedDesc`:
