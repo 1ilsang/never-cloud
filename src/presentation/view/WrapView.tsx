@@ -13,7 +13,8 @@ const WrapView: FunctionComponent<RouteComponentProps> = ({ history }) => {
   // REVIEW: URL init, immutable
   useEffect(() => {
     if (isFirst) {
-      const redirectUrl = window.localStorage.getItem(`LAST_VIEW_KEY`) || `/`;
+      const redirectUrl =
+        window.localStorage.getItem(`LAST_VIEW_KEY`) || `/photo/all`;
       setIsFirst(false);
       history.push(redirectUrl);
     }

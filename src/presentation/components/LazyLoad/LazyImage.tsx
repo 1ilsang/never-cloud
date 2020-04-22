@@ -6,10 +6,16 @@ type TLazyImage = {
   myStyle?: CSSProp;
   src: string;
   alt: string;
+  title?: string;
 };
 
 // REVIEW: Image lazy loading
-const LazyImage: FunctionComponent<TLazyImage> = ({ myStyle, src, alt }) => {
+const LazyImage: FunctionComponent<TLazyImage> = ({
+  myStyle,
+  src,
+  alt,
+  title,
+}) => {
   const [imageSrc, setImageSrc] = useState(placeHolder);
   const [imageRef, setImageRef] = useState(
     document.getElementById(`ref-image`) as HTMLImageElement,
@@ -65,6 +71,7 @@ const LazyImage: FunctionComponent<TLazyImage> = ({ myStyle, src, alt }) => {
       alt={alt}
       onLoad={onLoad}
       onError={onError}
+      title={title}
     />
   );
 };

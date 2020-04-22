@@ -5,29 +5,26 @@ import { ScrollWrap } from 'presentation/components/ScrollWrap';
 import { LazyImage } from 'presentation/components/LazyLoad';
 import photoData from 'assets/datas/photo.json';
 import { TPhoto } from 'store/_types/DataSet';
-import {
-  TJustifiedLayout,
-  TViewCondition,
-  TDefaultIdx,
-} from 'store/_types/Container';
+import { TJustifiedLayout } from 'store/_types/Container';
 
 const defaultIdx = {
   start: 0,
-  end: 10,
+  end: 40,
 };
-const defaultCondition = {
-  PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
-  PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
-};
+// const defaultCondition = {
+//   PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
+//   PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
+// };
 
 const PhotoListContainer: FunctionComponent<{}> = () => {
   // TODO: photoData 및 videoData 를 가공해서 list 에 넣어줘야 함.
   // TODO: cur index width slice + width 계산
   const [list, setList] = useState([]);
-  const [viewCondition, setViewCondition] = useState<TViewCondition>(
-    defaultCondition,
-  );
-  const [curIdx, setCurIdx] = useState<TDefaultIdx>(defaultIdx);
+  // const [viewCondition, setViewCondition] = useState<TViewCondition>(
+  //   defaultCondition,
+  // );
+  // const [curIdx, setCurIdx] = useState<TDefaultIdx>(defaultIdx);
+  const curIdx = defaultIdx;
 
   // throttle, click modal 등 해줘야할게 겁나 많음!!
   // `#/photo/all/viewer/${photoData[0].id} is Modal Route Path
@@ -37,47 +34,49 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
     // TODO: date path 및 localstorage sort 보고 보여줄 애들 만들어 줘야함.
     // TODO: defaultCondition 조정해줘야 함.(with window.localStorage.setItem)
     // JSON.stringify(photoData.filter(e => e.date <> urlQueryDate).slice(curIdx.start, curIdx.end)),
-    const originList: TPhoto[] = JSON.parse(
-      JSON.stringify(photoData.slice(curIdx.start, curIdx.end)),
+    const originList: TPhoto[] = Array.from(
+      JSON.parse(JSON.stringify(photoData.slice(curIdx.start, curIdx.end))),
     );
+    // console.log(typeof originList[0].date);
+
     const layoutList: number[] = originList.map((e) =>
       Number((Number(e.width.slice(0, -2)) / 120.45).toFixed(2)),
     );
     // REVIEW: line-breaking algorithm
     // FIXME: 레이아웃 만드는거 신중하게 해줘야 할듯.
-    const initLayout: TJustifiedLayout = justifiedLayout(layoutList);
+    const initLayout: TJustifiedLayout = justifiedLayout(layoutList, {
+      containerWidth: window.innerWidth - 290,
+      targetRowHeight: 124,
+      boxSpacing: 3,
+    });
+    const boxCssList = initLayout.boxes;
     /**
-     * [{
-     *  viewCondition,
-     *  arr
-     * }]
+     * [
+     *  {
+     *   viewCondition: 2018,
+     *   arr: [li]
+     *  },
+     * ]
      */
     // TODO: 이거 어떻게 채워줄지 고민해야함.
-    // const refineList = originList.reduce((acc, cur) => {
-    //   const year = cur.date;
-    //   const month = cur.date;
-    //   const day = cur.date;
-
-    //   if (acc.length === 0) {
-    //     const title = (
-    //       <h4 className="photo_title">
-    //         <CheckBox isChecked={false}>
-    //           <input id="this" type="checkbox" value={`${year}`} />
-    //           {year}년
-    //         </CheckBox>
-    //       </h4>
-    //     );
-    //     const ul = (
-    //       <PhotoList style={{ height: `1974.12px`, position: `relative` }}>
-    //         {refineLi}
-    //       </PhotoList>
-    //     );
-    //     acc.push({ title, ul });
-    //     return acc;
-    //   }
-    //   return acc;
-    // }, []);
-  });
+    const yearsList: any = [];
+    // let prevYear = -1;
+    for (const [i, cur] of Object.entries(originList)) {
+      // const year = cur.date.getFullYear();
+      const ele = (
+        <li style={{ ...boxCssList[i], position: `absolute` }} key={i}>
+          <Item>
+            <a href={`#/photo/all/viewer/${cur.id}`}>
+              <LazyImage src={cur.url} alt={cur.alt} title={cur.title} />
+            </a>
+          </Item>
+        </li>
+      );
+      yearsList.push(ele);
+      // if(year !== prevYear)
+    }
+    setList(yearsList);
+  }, [curIdx]);
 
   return (
     <Wrap>
@@ -92,59 +91,7 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
               </CheckBox>
             </h4>
             <PhotoList style={{ height: `1974.12px`, position: `relative` }}>
-              <li
-                style={{
-                  top: `0px`,
-                  left: `0px`,
-                  width: `160.6px`,
-                  height: `120.45px`,
-                  position: `absolute`,
-                }}
-              >
-                <Item>
-                  <a href={`#/photo/all/viewer/${photoData[0].id}`}>
-                    <img
-                      src={photoData[0].url}
-                      alt={photoData[0].alt}
-                      title={photoData[0].title}
-                    />
-                  </a>
-                </Item>
-              </li>
-              <li
-                style={{
-                  top: `0px`,
-                  left: `163.6px`,
-                  width: `160.6px`,
-                  height: `120.45px`,
-                  position: `absolute`,
-                }}
-              >
-                <Item>
-                  <a href={`#/photo/all/viewer/${photoData[1].id}`}>
-                    <img
-                      src={photoData[1].url}
-                      alt={photoData[1].alt}
-                      title={photoData[1].title}
-                    />
-                  </a>
-                </Item>
-              </li>
-              <li
-                style={{
-                  top: `0px`,
-                  left: `327.2px`,
-                  width: `398.159px`,
-                  height: `120.45px`,
-                  position: `absolute`,
-                }}
-              >
-                <Item>
-                  <a href={`#/photo/all/viewer/${photoData[2].id}`}>
-                    <LazyImage src={`dasfaefaelihjhi`} alt={photoData[2].alt} />
-                  </a>
-                </Item>
-              </li>
+              {list}
             </PhotoList>
           </AllPhotoList>
         </ScrollWrap>
@@ -221,13 +168,7 @@ const CheckBox = styled.label<{ isChecked: boolean }>`
 `;
 
 const PhotoList = styled.ul`
-  margin: -3px 0 0 -3px;
-
-  li {
-    position: relative;
-    float: left;
-    margin: 3px 0 0 3px;
-  }
+  margin: -9px 0 0 -9px;
 `;
 
 const Item = styled.div`

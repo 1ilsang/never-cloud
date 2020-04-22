@@ -56,7 +56,6 @@ const RightWrap = styled.div<{ isFull: boolean }>`
   bottom: 0;
   padding: 55px 0 30px 0;
 
-  // TODO: 여기서부터 해결해야함.
   .check_all {
     display: inline-block;
     height: 26px;
