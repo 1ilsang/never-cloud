@@ -5,16 +5,17 @@ import { ScrollWrap } from 'presentation/components/ScrollWrap';
 import { LazyImage } from 'presentation/components/LazyLoad';
 import photoData from 'assets/datas/photo.json';
 import { TPhoto } from 'store/_types/DataSet';
+import { getSortedFunction } from 'utils/Functions';
 import { TJustifiedLayout } from 'store/_types/Container';
 
 const defaultIdx = {
   start: 0,
-  end: 40,
+  end: 100,
 };
-// const defaultCondition = {
-//   PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
-//   PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
-// };
+const defaultCondition = {
+  PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
+  PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
+};
 
 const PhotoListContainer: FunctionComponent<{}> = () => {
   // TODO: photoData 및 videoData 를 가공해서 list 에 넣어줘야 함.
@@ -35,7 +36,13 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
     // TODO: defaultCondition 조정해줘야 함.(with window.localStorage.setItem)
     // JSON.stringify(photoData.filter(e => e.date <> urlQueryDate).slice(curIdx.start, curIdx.end)),
     const originList: TPhoto[] = Array.from(
-      JSON.parse(JSON.stringify(photoData.slice(curIdx.start, curIdx.end))),
+      JSON.parse(
+        JSON.stringify(
+          photoData
+            .slice(curIdx.start, curIdx.end)
+            .sort(getSortedFunction(defaultCondition.PHOTO_SORTS)),
+        ),
+      ),
     );
     // console.log(typeof originList[0].date);
 
@@ -106,7 +113,7 @@ const Wrap = styled.div`
   flex: 1 1 auto;
   display: block;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   position: relative;
   z-index: 10;
@@ -148,7 +155,7 @@ const CheckBox = styled.label<{ isChecked: boolean }>`
 	color: #222;
 	position: relative;
 	padding-left: 25px;
-	cursor: pointer;
+  cursor: pointer;
 
 	:before {
 		background-image: linear-gradient(transparent, transparent),
