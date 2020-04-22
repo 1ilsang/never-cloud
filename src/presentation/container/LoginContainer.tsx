@@ -15,7 +15,7 @@ const LoginContainer: FunctionComponent<TLoginContainer> = ({ history }) => {
   const idDebounce = useRef(
     debounce((value: string) => {
       // REVIEW: Something Async logic...
-      console.info(`Debounce!`, value);
+      console.info(`************* Debounce!`, value);
     }, debounceTimes),
   );
 

@@ -1,69 +1,52 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import justifiedLayout from 'justified-layout';
 import { ScrollWrap } from 'presentation/components/ScrollWrap';
 import { LazyImage } from 'presentation/components/LazyLoad';
 import photoData from 'assets/datas/photo.json';
 import { TPhoto } from 'store/_types/DataSet';
-import { getSortedFunction, throttle } from 'utils/Functions';
-import { TJustifiedLayout } from 'store/_types/Container';
+import { getSortedFunction } from 'utils/Functions';
+import { TDefaultIdx } from 'store/_types/Container';
+import {
+  getOriginList,
+  getInitLayout,
+  startScrollThrottle,
+} from 'utils/helpers/PhotoListContainer';
 
 const defaultIdx = {
   start: 0,
-  end: 100,
+  stepping: 20,
 };
 const defaultCondition = {
   PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
   PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
 };
 
-// TODO: throttle scrollTop 계산해서 던지기
-const scrollThrottle = throttle((e: any) => {
-  console.log(`throttle!`, e.target.scrollTop);
-}, 300);
+// TODO: ContextAPI 를 통해서 데이터 가져오는거 해줘야 함.
+const defaultPhotoList: TPhoto[] = JSON.parse(
+  JSON.stringify(
+    photoData.sort(getSortedFunction(defaultCondition.PHOTO_SORTS)),
+  ),
+);
 
 const PhotoListContainer: FunctionComponent<{}> = () => {
   // TODO: photoData 및 videoData 를 가공해서 list 에 넣어줘야 함.
-  // TODO: cur index width slice + width 계산
   const [list, setList] = useState([]);
-  // const [viewCondition, setViewCondition] = useState<TViewCondition>(
-  //   defaultCondition,
-  // );
-  // const [curIdx, setCurIdx] = useState<TDefaultIdx>(defaultIdx);
-  const curIdx = defaultIdx;
+  const [curIdx, setCurIdx] = useState<TDefaultIdx>(defaultIdx);
 
-  // throttle, click modal 등 해줘야할게 겁나 많음!!
+  // TODO: click modal
   // `#/photo/all/viewer/${photoData[0].id} is Modal Route Path
-  // const [layout, setLayout] = useState([]);
 
   useEffect(() => {
     // TODO: defaultCondition 조정해줘야 함.(with window.localStorage.setItem)
-    const originList: TPhoto[] = Array.from(
-      JSON.parse(
-        JSON.stringify(
-          photoData
-            .slice(curIdx.start, curIdx.end)
-            .sort(getSortedFunction(defaultCondition.PHOTO_SORTS)),
-        ),
-      ),
-    );
+    const originList = getOriginList({ defaultPhotoList, curIdx });
+    const initLayout = getInitLayout({ originList });
 
-    const layoutList: number[] = originList.map((e) =>
-      Number((Number(e.width.slice(0, -2)) / 120.45).toFixed(2)),
-    );
-    // REVIEW: line-breaking algorithm
-    const initLayout: TJustifiedLayout = justifiedLayout(layoutList, {
-      containerWidth: window.innerWidth - 290,
-      targetRowHeight: 124,
-      boxSpacing: 3,
-    });
-    const boxCssList = initLayout.boxes;
-
-    // TODO: 이거 어떻게 채워줄지 고민해야함.
+    // TODO: 년도별 컴포넌트 분리 해주장
+    // TODO: state 에서 돔 빼기
     const yearsList: any = [];
     for (const [i, cur] of Object.entries(originList)) {
       const ele = (
-        <li style={{ ...boxCssList[i], position: `absolute` }} key={i}>
+        <li style={{ ...initLayout.boxes[i], position: `absolute` }} key={i}>
           <Item>
             <a href={`#/photo/all/viewer/${cur.id}`}>
               <LazyImage src={cur.url} alt={cur.alt} title={cur.title} />
@@ -75,10 +58,16 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
     }
     setList(yearsList);
 
+    // TODO: make custom hooks
     const scrollListener = function (e: any) {
-      console.log(`NOT throttle`);
-      scrollThrottle(e);
+      console.info(`NOT throttle`, e.target.scrollTop);
+      const callback = setCurIdx((prev) => {
+        return { ...prev, start: prev.start + prev.stepping };
+      });
+      startScrollThrottle(callback, e.target);
     };
+
+    // TODO: useRef
     const scrollWrap = document.getElementById(`scroll-wrap`) as HTMLElement;
     scrollWrap.addEventListener('scroll', scrollListener);
 
@@ -97,7 +86,7 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
                 2018년
               </CheckBox>
             </h4>
-            <PhotoList style={{ height: `1974.12px`, position: `relative` }}>
+            <PhotoList style={{ height: `1000px`, position: `relative` }}>
               {list}
             </PhotoList>
           </AllPhotoList>

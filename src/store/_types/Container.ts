@@ -30,5 +30,5 @@ export type TViewCondition = {
 
 export type TDefaultIdx = {
   start: number;
-  end: number;
+  stepping: number;
 };

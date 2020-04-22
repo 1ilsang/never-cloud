@@ -49,7 +49,7 @@ const LazyImage: FunctionComponent<TLazyImage> = ({
             !didCancel &&
             (entry.intersectionRatio > 0 || entry.isIntersecting)
           ) {
-            setImageSrc(src);
+            setTimeout(() => setImageSrc(src), 500);
             observer.unobserve(imageRef);
           }
         });
