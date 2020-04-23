@@ -28,7 +28,7 @@ export const getInitLayout = ({ originList }) => {
 };
 
 export const startScrollThrottle = throttle(
-  (callback: Function, { scrollTop, scrollHeight }) => {
+  (callback: Function, { scrollTop, scrollHeight }: Element) => {
     console.info(
       `********** throttle!`,
       scrollHeight - window.innerHeight - scrollTop,
@@ -38,3 +38,13 @@ export const startScrollThrottle = throttle(
   },
   500,
 );
+
+export const DEFAULT_IDX = {
+  start: 0,
+  stepping: 20,
+};
+
+export const DEFAULT_CONDITION = {
+  PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
+  PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
+};

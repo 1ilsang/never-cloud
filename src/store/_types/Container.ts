@@ -1,4 +1,5 @@
 // import { RouteComponentProps } from 'react-router-dom';
+import { CSSProperties } from 'styled-components';
 
 export type TonLNBHandler = {
   handler: Function;
@@ -15,7 +16,7 @@ export type TJustifiedLayoutItem = {
   width: number;
   height: number;
   left: number;
-};
+} & CSSProperties;
 
 export type TJustifiedLayout = {
   containerheight: number;

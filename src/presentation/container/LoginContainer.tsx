@@ -1,29 +1,31 @@
-import React, { FunctionComponent, useState, useRef } from 'react';
+import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { RouteComponentProps } from 'react-router-dom';
-import { debounce } from '../../utils/Functions';
+import { useDebounce } from 'utils/hooks';
 
 type TLoginContainer = {
   history: RouteComponentProps['history'];
 };
+const debounceTimes = 500;
 
 const LoginContainer: FunctionComponent<TLoginContainer> = ({ history }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const notiSpanRef = useRef<HTMLSpanElement>(null);
-  const debounceTimes = 500;
-  const idDebounce = useRef(
-    debounce((value: string) => {
-      // REVIEW: Something Async logic...
-      console.info(`************* Debounce!`, value);
-    }, debounceTimes),
-  );
+
+  // REVIEW: custom hooks - debounce
+  const idDebounce = useDebounce(id, debounceTimes);
+
+  useEffect(() => {
+    if (!idDebounce) return;
+    console.info(`************* Debounce!`, id);
+    // eslint-disable-next-line
+  }, [idDebounce]);
 
   const onChangeIdHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     // REVIEW: persist 를 사용하면 비동기에도 e 객체를 가지고 있으나, 메모리에 남아 성능 이슈가 생긴다.
     // e.persist();
     const value = e.target?.value;
-    idDebounce.current(value);
     setId(value);
     console.info(`Not Debounce`, value);
   };

@@ -1,37 +1,31 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { ScrollWrap } from 'presentation/components/ScrollWrap';
 import { LazyImage } from 'presentation/components/LazyLoad';
 import photoData from 'assets/datas/photo.json';
 import { TPhoto } from 'store/_types/DataSet';
 import { getSortedFunction } from 'utils/Functions';
-import { TDefaultIdx } from 'store/_types/Container';
+import { TDefaultIdx, TJustifiedLayoutItem } from 'store/_types/Container';
 import {
   getOriginList,
   getInitLayout,
   startScrollThrottle,
+  DEFAULT_IDX,
+  DEFAULT_CONDITION,
 } from 'utils/helpers/PhotoListContainer';
-
-const defaultIdx = {
-  start: 0,
-  stepping: 20,
-};
-const defaultCondition = {
-  PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
-  PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,
-};
 
 // TODO: ContextAPI 를 통해서 데이터 가져오는거 해줘야 함.
 const defaultPhotoList: TPhoto[] = JSON.parse(
   JSON.stringify(
-    photoData.sort(getSortedFunction(defaultCondition.PHOTO_SORTS)),
+    photoData.sort(getSortedFunction(DEFAULT_CONDITION.PHOTO_SORTS)),
   ),
 );
 
 const PhotoListContainer: FunctionComponent<{}> = () => {
-  // TODO: photoData 및 videoData 를 가공해서 list 에 넣어줘야 함.
-  const [list, setList] = useState([]);
-  const [curIdx, setCurIdx] = useState<TDefaultIdx>(defaultIdx);
+  const [list, setList] = useState<
+    Array<TPhoto & { style: TJustifiedLayoutItem }>
+  >();
+  const [curIdx, setCurIdx] = useState<TDefaultIdx>(DEFAULT_IDX);
 
   // TODO: click modal
   // `#/photo/all/viewer/${photoData[0].id} is Modal Route Path
@@ -42,35 +36,29 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
     const initLayout = getInitLayout({ originList });
 
     // TODO: 년도별 컴포넌트 분리 해주장
-    // TODO: state 에서 돔 빼기
-    const yearsList: any = [];
-    for (const [i, cur] of Object.entries(originList)) {
-      const ele = (
-        <li style={{ ...initLayout.boxes[i], position: `absolute` }} key={i}>
-          <Item>
-            <a href={`#/photo/all/viewer/${cur.id}`}>
-              <LazyImage src={cur.url} alt={cur.alt} title={cur.title} />
-            </a>
-          </Item>
-        </li>
-      );
-      yearsList.push(ele);
-    }
-    setList(yearsList);
+    const yearsList = originList.map((e, i) => {
+      return {
+        ...e,
+        style: initLayout.boxes[i],
+      };
+    });
 
     // TODO: make custom hooks
-    const scrollListener = function (e: any) {
-      console.info(`NOT throttle`, e.target.scrollTop);
+    // FIXME: useThrottle 부터 해주면 됨. 여기 이상함 지금.
+    const scrollListener = function (e: Event) {
+      const target: any = e.target;
+      console.info(`NOT throttle`, target.scrollTop);
       const callback = setCurIdx((prev) => {
         return { ...prev, start: prev.start + prev.stepping };
       });
-      startScrollThrottle(callback, e.target);
+      startScrollThrottle(callback, target);
     };
 
     // TODO: useRef
     const scrollWrap = document.getElementById(`scroll-wrap`) as HTMLElement;
     scrollWrap.addEventListener('scroll', scrollListener);
 
+    setList(yearsList);
     return () => scrollWrap.removeEventListener(`scroll`, scrollListener);
   }, [curIdx]);
 
@@ -87,7 +75,26 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
               </CheckBox>
             </h4>
             <PhotoList style={{ height: `1000px`, position: `relative` }}>
-              {list}
+              {list
+                ? list.map((cur, i) => {
+                    return (
+                      <li
+                        style={{ ...cur.style, position: `absolute` }}
+                        key={i}
+                      >
+                        <Item>
+                          <a href={`#/photo/all/viewer/${cur.id}`}>
+                            <LazyImage
+                              src={cur.url}
+                              alt={cur.alt}
+                              title={cur.title}
+                            />
+                          </a>
+                        </Item>
+                      </li>
+                    );
+                  })
+                : null}
             </PhotoList>
           </AllPhotoList>
         </ScrollWrap>
