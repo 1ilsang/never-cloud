@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from 'react';
+import React, { FunctionComponent, useState, useEffect, useRef } from 'react';
 import { CSSProp } from 'styled-components';
 import { placeHolder, Image } from './styles';
 
@@ -17,9 +17,7 @@ const LazyImage: FunctionComponent<TLazyImage> = ({
   title,
 }) => {
   const [imageSrc, setImageSrc] = useState(placeHolder);
-  const [imageRef, setImageRef] = useState(
-    document.getElementById(`ref-image`) as HTMLImageElement,
-  );
+  const imageRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
   const onLoad = (event: Event) => {
     (event.target as HTMLImageElement).classList.add(`loaded`);
@@ -31,13 +29,14 @@ const LazyImage: FunctionComponent<TLazyImage> = ({
   useEffect(() => {
     let observer: IntersectionObserver;
     let didCancel = false;
+    const curImage = imageRef.current;
 
     const retFunc = () => {
       didCancel = true;
-      if (observer && observer.unobserve) observer.unobserve(imageRef);
+      if (observer && observer.unobserve) observer.unobserve(curImage);
     };
 
-    if (!(imageRef && imageSrc !== src)) return retFunc;
+    if (!(curImage && imageSrc !== src)) return retFunc;
     if (!IntersectionObserver) {
       setImageSrc(src);
       return retFunc;
@@ -50,7 +49,7 @@ const LazyImage: FunctionComponent<TLazyImage> = ({
             (entry.intersectionRatio > 0 || entry.isIntersecting)
           ) {
             setTimeout(() => setImageSrc(src), 500);
-            observer.unobserve(imageRef);
+            observer.unobserve(curImage);
           }
         });
       },
@@ -59,14 +58,13 @@ const LazyImage: FunctionComponent<TLazyImage> = ({
         rootMargin: `75%`,
       },
     );
-    observer.observe(imageRef);
+    observer.observe(curImage);
   }, [src, imageSrc, imageRef]);
 
   return (
     <Image
-      id={`ref-image`}
       myStyle={myStyle}
-      ref={setImageRef}
+      ref={imageRef}
       src={imageSrc}
       alt={alt}
       onLoad={onLoad}

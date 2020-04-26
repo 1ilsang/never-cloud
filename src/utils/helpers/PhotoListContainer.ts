@@ -31,6 +31,8 @@ export const DEFAULT_IDX = {
   stepping: 20,
 };
 
+export const DEFAULT_THROTTLE_MS = 500;
+
 export const DEFAULT_CONDITION = {
   PHOTO_GROUP_TYPES: window.localStorage.getItem(`PHOTO_GROUP_TYPES`) || `year`,
   PHOTO_SORTS: window.localStorage.getItem(`PHOTO_SORTS`) || `filmedDesc`,

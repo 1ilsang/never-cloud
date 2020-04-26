@@ -18,6 +18,7 @@ export const Image: StyledComponent<'img', {}, {}, string> = styled.img`
       opacity: 0.8;
     }
   }
+  // REVIEW: error handle image 404
   // I use utilitary classes instead of props to avoid style regenerating
   &.loaded:not(.has-error) {
     animation: loaded 300ms ease-in-out;

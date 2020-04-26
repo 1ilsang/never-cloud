@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useEffect, useState, useRef } from 'react';
+import React, {
+  FunctionComponent,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import styled from 'styled-components';
 import { ScrollWrap } from 'presentation/components/ScrollWrap';
 import { LazyImage } from 'presentation/components/LazyLoad';
@@ -11,6 +17,7 @@ import {
   getInitLayout,
   DEFAULT_IDX,
   DEFAULT_CONDITION,
+  DEFAULT_THROTTLE_MS,
 } from 'utils/helpers/PhotoListContainer';
 
 // TODO: ContextAPI 를 통해서 데이터 가져오는거 해줘야 함.
@@ -25,7 +32,28 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
     Array<TPhoto & { style: TJustifiedLayoutItem }>
   >();
   const [curIdx, setCurIdx] = useState<TDefaultIdx>(DEFAULT_IDX);
-  const scrollThrottle = throttle();
+  const scrollWrapRef = useRef() as React.MutableRefObject<HTMLDivElement>;
+  const scrollListenerCallback = useCallback(() => {
+    const scrollThrottle = throttle();
+
+    return function (e: Event) {
+      const target = e.target as Element;
+      const { scrollTop, scrollHeight } = target;
+      const scrollBottom = scrollHeight - window.innerHeight - scrollTop;
+      console.info(`NOT throttle`, scrollBottom);
+      if (scrollBottom > 100) return;
+
+      // REVIEW: throttle
+      const callback = () => {
+        console.info(`************ throttle!`);
+        // REVIEW: Immutable
+        setCurIdx((prev) => {
+          return { ...prev, start: prev.start + prev.stepping };
+        });
+      };
+      scrollThrottle(callback, DEFAULT_THROTTLE_MS);
+    };
+  }, []);
 
   // TODO: click modal
   // `#/photo/all/viewer/${photoData[0].id} is Modal Route Path
@@ -34,6 +62,8 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
     // TODO: defaultCondition 조정해줘야 함.(with window.localStorage.setItem)
     const originList = getOriginList({ defaultPhotoList, curIdx });
     const initLayout = getInitLayout({ originList });
+    const scrollWrap = scrollWrapRef.current;
+    const scrollListener = scrollListenerCallback();
 
     // TODO: 년도별 컴포넌트 분리 해주장
     const yearsList = originList.map((e, i) => {
@@ -43,36 +73,18 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
       };
     });
 
-    // REVIEW: throttle
-    const scrollListener = function (e: Event) {
-      const target = e.target as Element;
-      const { scrollTop, scrollHeight } = target;
-      const scrollBottom = scrollHeight - window.innerHeight - scrollTop;
-      console.info(`NOT throttle`, scrollBottom);
-      if (scrollBottom) return;
-
-      const callback = () => {
-        console.info(`************ throttle!`);
-        // REVIEW: Immutable
-        setCurIdx((prev) => {
-          return { ...prev, start: prev.start + prev.stepping };
-        });
-      };
-      scrollThrottle(callback, 300);
-    };
-
-    // TODO: useRef
-    const scrollWrap = document.getElementById(`scroll-wrap`) as HTMLElement;
+    setList(yearsList);
     scrollWrap.addEventListener('scroll', scrollListener);
 
-    setList(yearsList);
-    return () => scrollWrap.removeEventListener(`scroll`, scrollListener);
-  }, [curIdx]);
+    return () => {
+      scrollWrap.removeEventListener(`scroll`, scrollListener);
+    };
+  }, [curIdx, scrollWrapRef, scrollListenerCallback]);
 
   return (
     <Wrap>
       <ListContainer>
-        <ScrollWrap id="scroll-wrap">
+        <ScrollWrap ref={scrollWrapRef}>
           <AllPhotoList>
             {/* TODO: 얘네 컴포넌트로 빼줘야 할듯. 2018, 2019, 2020 ... 계속 재활용 됨 */}
             <h4 className="photo_title">
