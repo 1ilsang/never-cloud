@@ -11,14 +11,15 @@ export const debounce = (callback: Function, ms: number) => {
   };
 };
 
-export const throttle = (callback: Function, ms: number) => {
-  let throttleCheck: number;
+export const throttle = () => {
+  let throttleCheck: NodeJS.Timeout | null;
 
-  return function <T>(...args: Array<T>) {
+  return function (callback: Function, ms: number) {
     if (throttleCheck) return;
-    throttleCheck = window.setTimeout(() => {
+    const args = Array.from(arguments);
+    throttleCheck = setTimeout(() => {
       callback(...args);
-      throttleCheck = 0;
+      throttleCheck = null;
     }, ms);
   };
 };

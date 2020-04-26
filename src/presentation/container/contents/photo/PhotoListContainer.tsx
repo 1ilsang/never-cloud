@@ -4,12 +4,11 @@ import { ScrollWrap } from 'presentation/components/ScrollWrap';
 import { LazyImage } from 'presentation/components/LazyLoad';
 import photoData from 'assets/datas/photo.json';
 import { TPhoto } from 'store/_types/DataSet';
-import { getSortedFunction } from 'utils/Functions';
+import { getSortedFunction, throttle } from 'utils/Functions';
 import { TDefaultIdx, TJustifiedLayoutItem } from 'store/_types/Container';
 import {
   getOriginList,
   getInitLayout,
-  startScrollThrottle,
   DEFAULT_IDX,
   DEFAULT_CONDITION,
 } from 'utils/helpers/PhotoListContainer';
@@ -26,6 +25,7 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
     Array<TPhoto & { style: TJustifiedLayoutItem }>
   >();
   const [curIdx, setCurIdx] = useState<TDefaultIdx>(DEFAULT_IDX);
+  const scrollThrottle = throttle();
 
   // TODO: click modal
   // `#/photo/all/viewer/${photoData[0].id} is Modal Route Path
@@ -43,15 +43,22 @@ const PhotoListContainer: FunctionComponent<{}> = () => {
       };
     });
 
-    // TODO: make custom hooks
-    // FIXME: useThrottle 부터 해주면 됨. 여기 이상함 지금.
+    // REVIEW: throttle
     const scrollListener = function (e: Event) {
-      const target: any = e.target;
-      console.info(`NOT throttle`, target.scrollTop);
-      const callback = setCurIdx((prev) => {
-        return { ...prev, start: prev.start + prev.stepping };
-      });
-      startScrollThrottle(callback, target);
+      const target = e.target as Element;
+      const { scrollTop, scrollHeight } = target;
+      const scrollBottom = scrollHeight - window.innerHeight - scrollTop;
+      console.info(`NOT throttle`, scrollBottom);
+      if (scrollBottom) return;
+
+      const callback = () => {
+        console.info(`************ throttle!`);
+        // REVIEW: Immutable
+        setCurIdx((prev) => {
+          return { ...prev, start: prev.start + prev.stepping };
+        });
+      };
+      scrollThrottle(callback, 300);
     };
 
     // TODO: useRef

@@ -1,7 +1,6 @@
 import justifiedLayout from 'justified-layout';
 import { TPhoto } from 'store/_types/DataSet';
 import { TJustifiedLayout } from 'store/_types/Container';
-import { throttle } from 'utils/Functions';
 
 export const getOriginList = ({ defaultPhotoList, curIdx }) => {
   const originList: TPhoto[] = defaultPhotoList.slice(
@@ -26,18 +25,6 @@ export const getInitLayout = ({ originList }) => {
 
   return initLayout;
 };
-
-export const startScrollThrottle = throttle(
-  (callback: Function, { scrollTop, scrollHeight }: Element) => {
-    console.info(
-      `********** throttle!`,
-      scrollHeight - window.innerHeight - scrollTop,
-    );
-    if (scrollHeight - window.innerHeight - scrollTop > 100) return;
-    if (callback) callback();
-  },
-  500,
-);
 
 export const DEFAULT_IDX = {
   start: 0,
